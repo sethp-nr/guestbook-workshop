@@ -1,3 +1,7 @@
 version: "2"
 domain: example.com
 repo: guestbook-workshop
+resources:
+- group: webapp
+  version: v1
+  kind: GuestBook
