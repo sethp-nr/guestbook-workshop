@@ -289,11 +289,13 @@ There's also a `suite_test.go` in the `controllers` package. One of the main adv
 cp template/controllers/guestbook_controller_test.go controllers/
 ```
 
+At this point, running `make test` should produce a single failing test (because we haven't implemented any logic yet!).
+
 The template also contains a `.vscode` directory, accessible with `cp -R template/.vscode .`, as that tool is a common aesthetic in the Go community. If you're not accustomed to using .vscode, fear not: your favorite $EDITOR should work just fine for this workshop.
 
 ## Task: Getting a GuestBook resource
 
-The first thing to do in our new controller is replace `// your logic here` with something a little more useful. The first obstacle is knowing what our Reconcile should do: whereas before a Pod or Deployment resource held the desired state, now we've created a GuestBook CRD to hold that information.
+The first thing to do in our new controller is replace `// your logic here` in `controllers/guestbook_controller.go` with something a little more useful. The first obstacle is knowing what our Reconcile should do: whereas before a Pod or Deployment resource held the desired state, now we've created a GuestBook CRD to hold that information.
 
 But our Reconcile function isn't handed a GuestBook resource, it's just handed a `reconcile.Request`. Looking at the [Godoc](https://godoc.org/sigs.k8s.io/controller-runtime/pkg/reconcile#Request) we can see that a reconcile request contains just one piece of information:
 
@@ -339,7 +341,7 @@ func (r *GuestBookReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 ```
 
-Now run the tests with `make test`, and check out our fancy new log statement. You should see something like this:
+Now run the tests with `make test`. We still haven't created a GuestBook, so the test will fail, but it should log our fancy new log statement. In addition to the test failure, you should see something like this:
 
 > 2019-07-30T14:15:37.480-0700	INFO	Successfully retrieved GuestBook	{"guestbook": "default/test-guestbook"}
 
