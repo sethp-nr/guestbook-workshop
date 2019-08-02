@@ -315,7 +315,7 @@ Hint 4: If you're having trouble with the `Resources`, try stack overflow: https
 
 Hint 5: The `controllers/guestbook_controller_test.go` file contains an example of defining a `appsv1.Deployment{}` resource for the guestbook app
 
-Solution: See `solutions/create-deployment/guestbook_controller.go`
+Solution: See `_solutions/create-deployment/guestbook_controller.go`
 
 ## Optional Exercise: Use a per-GuestBook label selector
 
@@ -378,7 +378,7 @@ Goal: If we change the spec'd replicas, the deployment should be updated.
 
 Hint: You'll need to `Get` the expected `Deployment` and, if it exists, `Update` it instead of calling `Create`
 
-Solution: See `solutions/update-deployment/guestbook_controller.go`
+Solution: See `_solutions/update-deployment/guestbook_controller.go`
 
 ## Running against kind
 
