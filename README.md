@@ -38,8 +38,12 @@ which docker || (brew cask install docker && open -a Docker)
 And then we can install the tools we'll be using for this workshop:
 
 ```
-brew install golang kubectl kustomize && brew link --overwrite kubernetes-cli # to clobber docker's kubectl
-GO111MODULE="on" go get sigs.k8s.io/kind@v0.4.0
+BREW_PKGS=(golang kubectl kustomize)
+
+brew upgrade ${BREW_PKGS[@]} # see below for minimum versions
+brew install ${BREW_PKGS[@]}
+brew link --overwrite kubernetes-cli # to clobber docker's kubectl
+(cd /tmp/ && GO111MODULE="on" go get sigs.k8s.io/kind@v0.4.0)
 which kind || export PATH="$PATH:$(go env GOPATH)/bin"
 
 # kubebuilder
@@ -53,7 +57,7 @@ export PATH=$PATH:/usr/local/kubebuilder/bin
 sudo mv /tmp/kubebuilder_2.0.0-beta.0_${os}_${arch} /usr/local/kubebuilder
 ```
 
-If you already have these tools installed, please ensure you're using golang > 1.12, kubectl > 1.15, and especially kustomize > 3.1.
+If you already have these tools installed, please ensure you're using golang >= 1.12, kubectl >= 1.15, and especially kustomize >= 3.1.
 
 Now that we've got [`kind`](https://sigs.k8s.io/kind) installed, let's make a cluster:
 
@@ -65,8 +69,17 @@ export KUBECONFIG="$(kind get kubeconfig-path --name="workshop")"
 and check that everything's set up correctly:
 
 ```
-kubectl cluster-info
+kubectl get nodes
 ```
+
+You should see output like this:
+
+```
+NAME                     STATUS     ROLES    AGE   VERSION
+workshop-control-plane   NotReady   master   19s   v1.15.0
+```
+
+If not, see "troubleshooting" below.
 
 One last setup step will be to save ourselves a good deal of typing:
 
@@ -167,6 +180,43 @@ k delete -f https://raw.githubusercontent.com/kubernetes/examples/011284134a724c
 ```
 
 to delete all the resources that were created as part of the setup.
+
+### Troubleshooting
+
+#### Unable to connect to the server: ...: i/o timeout
+
+If you see a message like
+
+```
+Unable to connect to the server: dial tcp 192.168.99.103:8443: i/o timeout
+```
+
+It's likely that your KUBECONFIG is still pointing to a different cluster. Try running:
+
+```
+export KUBECONFIG="$(kind get kubeconfig-path --name="workshop")"
+```
+
+#### error: SchemaError ...
+
+If you see a message like
+```
+error: SchemaError(io.k8s.api.authorization.v1.SelfSubjectRulesReview): invalid object doesn’t have additional properties
+```
+
+or
+
+```
+error: SchemaError(io.k8s.api.storage.v1beta1.CSIDriverList): invalid object doesn't have additional properties
+```
+
+most likely what's going on is that your version of `kubectl` is out of date. That might happen if it hasn't been `upgrade`d by homebrew, but also because Docker installs an ancient (v1.10) `kubectl` version in `/usr/local/bin` that Homebrew tries to respect. Try:
+
+```
+brew install kubectl
+brew upgrade kubectl
+brew link --overwrite kubectl
+```
 
 # Phase 2
 
