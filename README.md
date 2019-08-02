@@ -156,7 +156,7 @@ To get comfortable using `kubectl`, let's try making a trivial change: adding an
 
 ```
 k edit $(k get po -l app=guestbook -o name | head -n1)
-k describe po -l app=frontend
+k describe po -l app=guestbook
 ```
 
 Notice that one of the pods now has `Annotations:   my-key: my-val`.
